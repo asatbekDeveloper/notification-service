@@ -3,7 +3,6 @@ package com.example.notificationservice.dto;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,7 +18,7 @@ public class RabbitDTO {
 
     private Long tenderId;
 
-    private LocalDateTime submissionDateTime;
+    private String submissionDateTime;
 
 }
 
