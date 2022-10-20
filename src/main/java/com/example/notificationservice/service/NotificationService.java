@@ -4,7 +4,6 @@ package com.example.notificationservice.service;
 import com.example.notificationservice.dto.RabbitDTO;
 import lombok.SneakyThrows;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ public class NotificationService {
     @SneakyThrows
     public void sendNotification(RabbitDTO dto) {
 
-        messagingTemplate.convertAndSend("/topic/notifications",dto);
+        messagingTemplate.convertAndSend("/topic/notifications", dto);
 
     }
 }
