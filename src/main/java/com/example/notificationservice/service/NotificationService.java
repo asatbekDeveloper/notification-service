@@ -5,7 +5,6 @@ import com.example.notificationservice.dto.NotificationClickDTO;
 import com.example.notificationservice.dto.NotificationDTO;
 import com.example.notificationservice.dto.RabbitDTO;
 import com.example.notificationservice.entity.Notification;
-import com.example.notificationservice.firebase.FireBaseService;
 import com.example.notificationservice.repository.NotificationRepository;
 import lombok.SneakyThrows;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -26,34 +25,35 @@ public class NotificationService {
     private final NotificationRepository repository;
     private final SimpMessagingTemplate messagingTemplate;
 
-    private final FireBaseService fireBaseService;
-
     @Autowired
-    public NotificationService(NotificationRepository repository, SimpMessagingTemplate messagingTemplate, FireBaseService fireBaseService) {
+    public NotificationService(NotificationRepository repository, SimpMessagingTemplate messagingTemplate) {
         this.repository = repository;
         this.messagingTemplate = messagingTemplate;
-        this.fireBaseService = fireBaseService;
     }
 
     @RabbitListener(queues = "${rabbitmq.queue}")
     public void receive(RabbitDTO dto) {
-        System.out.println("dto = " + dto);
-        System.out.println("------------------");
         sendNotification(dto);
     }
 
     @SneakyThrows
     public void sendNotification(RabbitDTO dto) {
-        String token = "AAAAv8u7PK8:APA91bEEfsHcVegCCAK43eNb775xyQNz2m6SCumUPDkpAthcyXcem-ah3fqIN9Ufq5xMhetcfBnhPy1UAloFcdrb5dYGzKms0xz2qQ9HZB2mkTZaRjZ3Xg9t8mHuFDCg7bT-zidnJ9A2";
-        System.out.println("1111......");
-//        fireBaseService.sendNotification(dto, token);
         messagingTemplate.convertAndSend("/topic/notifications", new NotificationDTO(dto.getTotalRate(), dto.getUserId(), dto.getTenderId(), false, dto.getSubmissionDateTime()));
-        repository.save(new Notification(dto.getUserId(), dto.getTenderId(), dto.getTotalRate(), false, dto.getSubmissionDateTime()));
+
+        saveNotification(dto);
+    }
+
+    private void saveNotification(RabbitDTO dto) {
+
+        Optional<Notification> optionalNotification = repository.findByTenderIdAndBidderId(dto.getTenderId(), dto.getUserId());
+        if (optionalNotification.isEmpty()) {
+            repository.save(new Notification(dto.getUserId(), dto.getTenderId(), dto.getTotalRate(), false, dto.getSubmissionDateTime()));
+        }
     }
 
     public ResponseEntity<List<NotificationDTO>> getAll() {
 
-        List<Notification> notifications = repository.findAll(Sort.by(Sort.Direction.DESC,"submissionDateTime"));
+        List<Notification> notifications = repository.findAll(Sort.by(Sort.Direction.DESC, "submissionDateTime"));
 
         return new ResponseEntity<>(toDTO(notifications), HttpStatus.OK);
     }
@@ -92,7 +92,7 @@ public class NotificationService {
         Notification notification = optionalNotification.get();
         notification.setClick(true);
         repository.save(notification);
-        messagingTemplate.convertAndSend("/topic/notifications",1);
+        messagingTemplate.convertAndSend("/topic/notifications", 1);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
