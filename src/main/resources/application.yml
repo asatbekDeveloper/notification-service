@@ -7,8 +7,24 @@ spring:
     port: 15672
     username: guest
     password: guest
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL91Dialect
+
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://localhost:5432/rabbitmq
+    username: postgres
+    password: postgres
+
 
 rabbitmq:
   exchange: rabbit.exchange
   queue: rabbit.queue
   routingkey: rabbit.routingkey
+
+
+
