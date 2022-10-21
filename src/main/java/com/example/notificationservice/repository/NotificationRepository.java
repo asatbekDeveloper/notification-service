@@ -10,4 +10,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     Optional<Notification> findByBidderIdAndTenderIdAndClickIsFalse(Long bidderId, Long tenderId);
 
+
+
+    Optional<Notification> findByTenderIdAndBidderId(Long tenderId, Long bidderId);
+
 }

@@ -2,9 +2,7 @@ package com.example.notificationservice.controller;
 
 import com.example.notificationservice.dto.NotificationClickDTO;
 import com.example.notificationservice.dto.NotificationDTO;
-import com.example.notificationservice.dto.RabbitDTO;
 import com.example.notificationservice.service.NotificationService;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +23,21 @@ public class NotificationController {
 
 
     @GetMapping
-    public ResponseEntity<List<NotificationDTO>> getAll(){
+    public ResponseEntity<List<NotificationDTO>> getAll() {
         return service.getAll();
     }
 
 
     @PostMapping("/on_click")
-    public ResponseEntity<Void> onClick(@RequestBody NotificationClickDTO dto){
+    public ResponseEntity<Void> onClick(@RequestBody NotificationClickDTO dto) {
         return service.onClick(dto);
     }
+
+
+    @GetMapping("/{tenderId}/{bidderId}")
+    public ResponseEntity<NotificationDTO> get(@PathVariable Long tenderId, @PathVariable Long bidderId) {
+        return service.findById(tenderId, bidderId);
+    }
+
 
 }

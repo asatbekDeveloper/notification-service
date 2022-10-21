@@ -70,6 +70,19 @@ public class NotificationService {
     }
 
 
+    private NotificationDTO toDTO(Notification notification) {
+
+        return NotificationDTO.builder()
+                .bidderId(notification.getBidderId())
+                .tenderId(notification.getTenderId())
+                .totalRate(notification.getTotalRate())
+                .click(notification.isClick())
+                .submissionDateTime(notification.getSubmissionDateTime())
+                .build();
+
+    }
+
+
     public ResponseEntity<Void> onClick(NotificationClickDTO dto) {
         Optional<Notification> optionalNotification = repository.findByBidderIdAndTenderIdAndClickIsFalse(dto.getBidderId(), dto.getTenderId());
 
@@ -80,5 +93,14 @@ public class NotificationService {
         repository.save(notification);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public ResponseEntity<NotificationDTO> findById(Long tenderId, Long bidderId) {
+
+        Optional<Notification> optionalNotification = repository.findByTenderIdAndBidderId(tenderId, bidderId);
+
+        if (optionalNotification.isEmpty()) throw new RuntimeException("Notification not found");
+
+        return new ResponseEntity<>(toDTO(optionalNotification.get()), HttpStatus.OK);
     }
 }
