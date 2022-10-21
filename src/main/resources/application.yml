@@ -17,8 +17,8 @@ spring:
       ddl-auto: update
   datasource:
     url: jdbc:postgresql://localhost:5432/rabbitmq
-    username: postgres
-    password: postgres
+    username: testuser
+    password: 111
 
 
 rabbitmq:

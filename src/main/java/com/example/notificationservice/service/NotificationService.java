@@ -10,6 +10,7 @@ import com.example.notificationservice.repository.NotificationRepository;
 import lombok.SneakyThrows;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -52,7 +53,7 @@ public class NotificationService {
 
     public ResponseEntity<List<NotificationDTO>> getAll() {
 
-        List<Notification> notifications = repository.findAll();
+        List<Notification> notifications = repository.findAll(Sort.by(Sort.Direction.DESC,"submissionDateTime"));
 
         return new ResponseEntity<>(toDTO(notifications), HttpStatus.OK);
     }

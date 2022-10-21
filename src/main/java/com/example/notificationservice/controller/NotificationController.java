@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1/notification")
+@CrossOrigin("*")
 public class NotificationController {
 
 
