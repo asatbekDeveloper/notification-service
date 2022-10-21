@@ -92,7 +92,7 @@ public class NotificationService {
         Notification notification = optionalNotification.get();
         notification.setClick(true);
         repository.save(notification);
-
+        messagingTemplate.convertAndSend("/topic/notifications",1);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
